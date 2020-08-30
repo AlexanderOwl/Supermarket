@@ -24,6 +24,7 @@ namespace Supermarket
             customers = shop.Queue();
             shop.Seller(customers, productsInShop);
             date.AddDays(1);
+            shop.TodaySoldProducts();
             //} while();
             // did some changes
         }

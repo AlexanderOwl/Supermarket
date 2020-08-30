@@ -20,7 +20,7 @@ namespace Supermarket
             this.QueueNumber = QueueNumber;
             this.Name = Name;
             this.ProductsList = ShopingListGenerator(_storage.ProductGenerator());
-            this.Cash = AmountGenerator(20, 100);
+            this.Cash = AmountGenerator(20, 1000);
         }
 
         //public List<Product> GenerateBuyList()
