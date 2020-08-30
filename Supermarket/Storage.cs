@@ -17,12 +17,12 @@ namespace Supermarket
             date = DateTime.Today;
             Random rdm = new Random();
             int min = 1;
-                int max=20;
+            int max = 20;
             List<Product> products = new List<Product>()
             {
-                
-               
-                new Product("Battery AAA", "Small", rdm.Next(min, max), 7, date.AddDays(6)),
+
+
+                new Product("Battery A", "Small", rdm.Next(min, max), 7, date.AddDays(6)),
                 new Product("'Orbit'", "Small", rdm.Next(min, max), 1, date.AddDays(3)),
                 new Product("KitKat", "Small", rdm.Next(min, max), 3, date.AddDays(1)),
                 new Product("Battery AA", "Small", rdm.Next(min, max), 7, date.AddDays(6)),
@@ -45,19 +45,16 @@ namespace Supermarket
                 new Product("Microwave", "Large", rdm.Next(min, max), 30, date.AddDays(4))
 
             };
-                        
-                int minNumOfPositions = 0;
-                int maxNumOfPositions = products.Count;
-                Random productsNumCount = new Random((int)DateTime.Now.Ticks);
-                int numOfPositions = rdm.Next(minNumOfPositions, maxNumOfPositions);
-                Random randomOrderBy = new Random((int)DateTime.Now.Ticks);
-                List<Product> storageList = products.OrderBy(x => randomOrderBy.Next()).ToList();
-                storageList.RemoveRange(0, numOfPositions);               
-                
-                return storageList;           
-            
+
+
+            Random randomOrderBy = new Random((int)DateTime.Now.Ticks);
+            List<Product> storageList = products.OrderBy(x => randomOrderBy.Next()).ToList();
+
+
+            return storageList;
+
         }
 
-        
+
     }
 }

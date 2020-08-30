@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace Supermarket
 {
@@ -15,27 +17,22 @@ namespace Supermarket
             Console.WriteLine(date.ToShortDateString());
             Console.WriteLine("Hi there! Our store is open!");
             Storage storage = new Storage();
-            List<Product> availableProducts = storage.ProductGenerator();   
+            List<Product> availableProducts = storage.ProductGenerator();
             return availableProducts;
         }
 
-        public void ShelfShow( List<Product> availableProducts)
+        public void ShelfShow(List<Product> availableProducts)
         {
-            foreach (Product item in availableProducts)
-            {
-                if (item.Size == "Large")
-                {
-                    largeShelf.Products.Add(item);
-                }
-                else if (item.Size == "Middle")
-                {
-                    middleShelf.Products.Add(item);
-                }
-                else if (item.Size == "Small")
-                {
-                    smallShelf.Products.Add(item);
-                }
-            }
+
+            largeShelf.Products = availableProducts.Where(product => product.Size == "Large").ToList();
+            middleShelf.Products = availableProducts.Where(product => product.Size == "Middle").ToList();
+            smallShelf.Products = availableProducts.Where(product => product.Size == "Small").ToList();
+            Random randomRemoveRange = new Random((int)DateTime.Now.Ticks);
+            largeShelf.Products.RemoveRange(2, randomRemoveRange.Next(0, largeShelf.Products.Count - 2));
+            Thread.Sleep(20);
+            middleShelf.Products.RemoveRange(2, randomRemoveRange.Next(0, middleShelf.Products.Count - 2));
+            Thread.Sleep(20);
+            smallShelf.Products.RemoveRange(2, randomRemoveRange.Next(0, smallShelf.Products.Count - 2));
 
             Console.WriteLine();
             Console.WriteLine("GOODS");
@@ -44,7 +41,7 @@ namespace Supermarket
             foreach (Product item in smallShelf.Products)
             {
                 Console.Write($"| {item.Name} ({item.Amount} pc.) \t|");
-                if (index % 3 == 0 && smallShelf.Products.Count!=index)
+                if (index % 3 == 0 && smallShelf.Products.Count != index)
                 {
                     Console.WriteLine();
                     Console.Write(" ");
@@ -81,7 +78,7 @@ namespace Supermarket
                 index++;
             }
             Console.WriteLine();
-            
+
             Pause();
         }
 
@@ -124,7 +121,7 @@ namespace Supermarket
                         {
                             if (avProd.Amount >= prod.Amount)
                             {
-                                // Console.Write($" - costs {prod.Price}$");
+
                                 sum += prod.Price * prod.Amount;
                                 toBuy.Add(prod);
                             }
@@ -133,22 +130,26 @@ namespace Supermarket
                                 if (avProd.Amount < prod.Amount)
                                 {
                                     Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine($" Sorry, but we don't have this product in this amount");
+                                    Console.WriteLine($" Sorry, we have just {avProd.Amount} pc");
                                     Console.ResetColor();
-                                    Console.WriteLine($"Want buy {avProd.Amount} pc? y/n");
-
+                                    Console.ForegroundColor = ConsoleColor.DarkBlue;
+                                    Console.WriteLine($"Want buy? y/n");
+                                    Console.ResetColor();
                                     ConsoleKey key = Console.ReadKey().Key;
-                                    if(key == ConsoleKey.Y)
+                                    if (key == ConsoleKey.Y)
                                     {
                                         sum += avProd.Price * avProd.Amount;
                                         toBuy.Add(avProd);
-                                    }                                    
+                                    }
                                 }
                                 else
                                 {
+                                    Console.ForegroundColor = ConsoleColor.Red;
                                     Console.WriteLine($"\nSorry, but we don't have this product right now");
+                                    Console.ResetColor();
+                                    Pause();
                                 }
-                                Pause();
+
                             }
 
                             break;
@@ -157,10 +158,11 @@ namespace Supermarket
                 }
                 if (sum <= item.Cash)
                 {
-                    availableProducts = GenerateCheck(toBuy, sum, availableProducts, item.Cash);
+                    availableProducts = GenerateCheck(toBuy, sum, availableProducts, item.Cash,true);
                 }
                 else
                 {
+                    GenerateCheck(toBuy, sum, availableProducts, item.Cash, false);
                     Console.WriteLine($"\nAmount: {sum}$ ");
                     Console.WriteLine($"\nSorry, but you have only {item.Cash}$, that's not enough.");
                     Pause();
@@ -170,28 +172,30 @@ namespace Supermarket
             // return newProductsInShop;
         }
 
-        public List<Product> GenerateCheck(List<Product> productsToBuy, int amount, List<Product> productsInShop, int cash)
+        public List<Product> GenerateCheck(List<Product> productsToBuy, int amount, List<Product> productsInShop, int cash, bool enoughMoney)
         {
             Console.WriteLine("\n\nYour reciepe");
             foreach (Product prod in productsToBuy)
             {
                 Console.WriteLine($"{prod.Name} (x{prod.Amount}) - {prod.Amount * prod.Price}$");
-
-                foreach (var avProd in productsInShop)
+                if (enoughMoney)
                 {
-                    if (avProd.Name == prod.Name)
+                    foreach (var avProd in productsInShop)
                     {
-                        //int index = productsInShop.IndexOf(prod);
-                        if (avProd.Amount == prod.Amount)
+                        if (avProd.Name == prod.Name)
                         {
-                            productsInShop.Remove(prod);
-                        }
-                        else
-                        {
-                            avProd.Amount = avProd.Amount - prod.Amount;
-                        }
+                            //int index = productsInShop.IndexOf(prod);
+                            if (avProd.Amount == prod.Amount)
+                            {
+                                productsInShop.Remove(prod);
+                            }
+                            else
+                            {
+                                avProd.Amount = avProd.Amount - prod.Amount;
+                            }
 
-                        break;
+                            break;
+                        }
                     }
                 }
             }
