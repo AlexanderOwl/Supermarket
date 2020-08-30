@@ -20,39 +20,69 @@ namespace Supermarket
             return availableProducts;
         }
 
-        public void ShelfShow(/*Shelf sShelf, Shelf mShelf, Shelf lShelf, */ List<Product> availableProducts)
+        public void ShelfShow( List<Product> availableProducts)
         {
             foreach (Product item in availableProducts)
             {
-                if (item.Shelf.Size == "Large")
+                if (item.Size == "Large")
                 {
                     largeShelf.Products.Add(item);
                 }
-                else if (item.Shelf.Size == "Middle")
+                else if (item.Size == "Middle")
                 {
                     middleShelf.Products.Add(item);
                 }
-                else if (item.Shelf.Size == "Small")
+                else if (item.Size == "Small")
                 {
                     smallShelf.Products.Add(item);
                 }
             }
-            Console.WriteLine("Available products:");
-            Console.WriteLine("Large shelf - ");
-            foreach (Product item in largeShelf.Products)
-            {
-                Console.WriteLine($"{item.Name} ({item.Amount} pc.)");
-            }
-            Console.WriteLine("Middle shelf - ");
-            foreach (Product item in middleShelf.Products)
-            {
-                Console.WriteLine($"{item.Name} ({item.Amount} pc.)");
-            }
-            Console.WriteLine("Small shelf - ");
+
+            Console.WriteLine();
+            Console.WriteLine("GOODS");
+            Console.Write("S");
+            int index = 1;
             foreach (Product item in smallShelf.Products)
             {
-                Console.WriteLine($"{item.Name} ({item.Amount} pc.)");
+                Console.Write($"| {item.Name} ({item.Amount} pc.) \t|");
+                if (index % 3 == 0 && smallShelf.Products.Count!=index)
+                {
+                    Console.WriteLine();
+                    Console.Write(" ");
+                }
+                index++;
             }
+
+            Console.WriteLine();
+            Console.WriteLine("  _______________________________________________________________________");
+            Console.Write("M");
+            index = 1;
+            foreach (Product item in middleShelf.Products)
+            {
+                Console.Write($"| {item.Name} ({item.Amount} pc.) \t|");
+                if (index % 3 == 0 && middleShelf.Products.Count != index)
+                {
+                    Console.WriteLine();
+                    Console.Write(" ");
+                }
+                index++;
+            }
+            Console.WriteLine();
+            Console.WriteLine("  _______________________________________________________________________");
+            Console.Write("L");
+            index = 1;
+            foreach (Product item in largeShelf.Products)
+            {
+                Console.Write($"| {item.Name} ({item.Amount} pc.) \t|");
+                if (index % 3 == 0 && largeShelf.Products.Count != index)
+                {
+                    Console.WriteLine();
+                    Console.Write(" ");
+                }
+                index++;
+            }
+            Console.WriteLine();
+            
             Pause();
         }
 
