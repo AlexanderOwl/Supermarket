@@ -8,7 +8,7 @@ namespace Supermarket
 {
     class Storage
     {
-        //public List<Product> Products = new List<Product>();
+        public List<Product> Products = new List<Product>();
 
         public List<Product> ProductGenerator()
         {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Supermarket
@@ -15,6 +16,7 @@ namespace Supermarket
             List<Customer> customers = new List<Customer>();
             DateTime date = new DateTime();
             date = DateTime.Today;
+         
             // do
             // {
             productsInShop = shop.Welcome(date);
@@ -24,5 +26,6 @@ namespace Supermarket
             date.AddDays(1);
             //} while();
         }
+        
     }
 }

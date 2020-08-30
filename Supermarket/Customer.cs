@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Supermarket
@@ -18,23 +19,49 @@ namespace Supermarket
         {
             this.QueueNumber = QueueNumber;
             this.Name = Name;
-            this.ProductsList = GenerateBuyList();
+            this.ProductsList = ShopingListGenerator(_storage.ProductGenerator());
             this.Cash = AmountGenerator(20, 100);
         }
 
-        public List<Product> GenerateBuyList()
+        //public List<Product> GenerateBuyList()
+        //{
+        //    List<Product> possibleProducts = _storage.ProductGenerator();
+        //    Random rdm = new Random();
+        //    foreach (Product item in possibleProducts)
+        //    {
+        //        if (AmountGenerator(0, 5) <= 4)
+        //        {
+        //            item.Amount = rdm.Next(1, 5);
+        //            ProductsList.Add(item);
+        //        }
+        //    }
+        //    return ProductsList;
+        //}
+
+        static List<Product> ShopingListGenerator(List<Product> uvailableShopProducts)
         {
-            List<Product> possibleProducts = _storage.ProductGenerator();
+            int minNumOfPositions = 0;
+            int maxNumOfPositions = 6;
             Random rdm = new Random();
-            foreach (Product item in possibleProducts)
+            int NumOfPositions = rdm.Next(minNumOfPositions, maxNumOfPositions);
+            Random randomOrderBy = new Random();
+            List<Product> shopingList = uvailableShopProducts.OrderBy(x => randomOrderBy.Next()).ToList();
+            shopingList.RemoveRange(0, NumOfPositions);
+            Random amountRandom = new Random((int)DateTime.Now.Ticks);
+            foreach (var product in shopingList)
             {
-                if (AmountGenerator(0, 5) <= 4)
+                
+                foreach (var storageProduct in uvailableShopProducts)
                 {
-                    item.Amount = rdm.Next(1, 5);
-                    ProductsList.Add(item);
+                    if(product == storageProduct)
+                    {
+                        product.Amount = amountRandom.Next(1, storageProduct.Amount);
+                        Thread.Sleep(20);
+                        break;
+                    }
                 }
             }
-            return ProductsList;
+            return shopingList;
         }
 
         int AmountGenerator(int min, int max)

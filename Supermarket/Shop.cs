@@ -16,30 +16,14 @@ namespace Supermarket
             Storage storage = new Storage();
             List<Product> availableProducts = new List<Product>();
             availableProducts = storage.ProductGenerator();
-            //foreach (Product item in availableProducts)
-            //{
-            //    Console.WriteLine("Large shelf - ");
-            //    if (item.Shelf.Size == "Large")
-            //    {
-            //        smallShelf.Products.Add(item);
-            //       // Console.WriteLine($"{item.Name} ({item.Amount} pc.)");
-            //    }
-            //    else if (item.Shelf.Size == "Medium")
-            //    {
-            //        middleShelf.Products.Add(item);
-            //    }
-            //    else if (item.Shelf.Size == "Small")
-            //    {
-            //        largeShelf.Products.Add(item);
-            //    }
-            //}
+
             return availableProducts;
         }
 
         public void ShelfShow(/*Shelf sShelf, Shelf mShelf, Shelf lShelf, */ List<Product> availableProducts)
         {
             foreach (Product item in availableProducts)
-            {                
+            {
                 if (item.Shelf.Size == "Large")
                 {
                     largeShelf.Products.Add(item);
@@ -74,7 +58,7 @@ namespace Supermarket
 
         public void Pause()
         {
-            Console.WriteLine("...press ane key");
+            Console.WriteLine("...press any key");
             Console.ReadKey();
         }
         public List<Customer> Queue()
@@ -85,7 +69,8 @@ namespace Supermarket
             List<Customer> customersQueue = new List<Customer>();
             for (int i = 0; i < queueNumber; i++)
             {
-                Customer customer = new Customer(names[rdm.Next(0,8)], queueNumber);
+                Customer customer = new Customer(names[rdm.Next(0, 8)], i);
+                //удалить одинаковых людей
                 customersQueue.Add(customer);
             }
             return customersQueue;
@@ -93,6 +78,8 @@ namespace Supermarket
 
         public void Seller(List<Customer> customers, List<Product> availableProducts)
         {
+            //List<Product> newProductsInShop = new List<Product>();
+            //newProductsInShop = availableProducts;
             foreach (Customer item in customers)
             {
                 Console.WriteLine($"\nHello, {item.Name}. What you would like to buy?");
@@ -101,22 +88,21 @@ namespace Supermarket
                 foreach (Product prod in item.ProductsList)
                 {
                     Console.Write($"\n{prod.Name}, {prod.Amount} pc.");
-                    int index = 0;
+
                     foreach (var avProd in availableProducts)
                     {
                         if (avProd.Name == prod.Name)
                         {
-                            if (availableProducts[index].Amount >= prod.Amount)
+                            if (avProd.Amount >= prod.Amount)
                             {
-                               // Console.Write($" - costs {prod.Price}$");
+                                // Console.Write($" - costs {prod.Price}$");
                                 sum += prod.Price * prod.Amount;
                                 toBuy.Add(prod);
                             }
                             else
                             {
-                                if (availableProducts[index].Amount < prod.Amount)
+                                if (avProd.Amount < prod.Amount)
                                 {
-                                    // Console.WriteLine($"Sorry, but we have only {availableProducts[index].Amount} pc.");
                                     Console.WriteLine($"\nSorry, but we don't have this product in this amount");
                                 }
                                 else
@@ -125,14 +111,14 @@ namespace Supermarket
                                 }
                                 Pause();
                             }
-                            index++;
+
                             break;
                         }
                     }
                 }
                 if (sum <= item.Cash)
                 {
-                    GenerateCheck(toBuy, sum, availableProducts, item.Cash);
+                    availableProducts = GenerateCheck(toBuy, sum, availableProducts, item.Cash);
                 }
                 else
                 {
@@ -141,6 +127,8 @@ namespace Supermarket
                     Pause();
                 }
             }
+
+            // return newProductsInShop;
         }
 
         public List<Product> GenerateCheck(List<Product> productsToBuy, int amount, List<Product> productsInShop, int cash)
@@ -148,22 +136,22 @@ namespace Supermarket
             Console.WriteLine("\n\nYour reciepe");
             foreach (Product prod in productsToBuy)
             {
-                Console.WriteLine($"{prod.Name} (x{prod.Amount}) - {prod.Amount*prod.Price}$");
-                int index = 0;
+                Console.WriteLine($"{prod.Name} (x{prod.Amount}) - {prod.Amount * prod.Price}$");
+
                 foreach (var avProd in productsInShop)
                 {
                     if (avProd.Name == prod.Name)
                     {
                         //int index = productsInShop.IndexOf(prod);
-                        if (productsInShop[index].Amount == prod.Amount)
+                        if (avProd.Amount == prod.Amount)
                         {
                             productsInShop.Remove(prod);
                         }
                         else
                         {
-                            productsInShop[index].Amount = productsInShop[index].Amount - prod.Amount;
+                            avProd.Amount = avProd.Amount - prod.Amount;
                         }
-                        index++;
+
                         break;
                     }
                 }
