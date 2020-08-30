@@ -10,6 +10,19 @@ namespace Supermarket
     {
         static void Main(string[] args)
         {
+            Shop shop = new Shop();
+            List<Product> productsInShop = new List<Product>();
+            List<Customer> customers = new List<Customer>();
+            DateTime date = new DateTime();
+            date = DateTime.Today;
+            // do
+            // {
+            productsInShop = shop.Welcome(date);
+            shop.ShelfShow(productsInShop);
+            customers = shop.Queue();
+            shop.Seller(customers, productsInShop);
+            date.AddDays(1);
+            //} while();
         }
     }
 }
