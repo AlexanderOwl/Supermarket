@@ -17,7 +17,7 @@ namespace Supermarket
             date = DateTime.Today;
             Random rdm = new Random();
             int min = 1;
-            int max = 20;
+                int max=20;
             List<Product> products = new List<Product>()
             {
                 
@@ -52,21 +52,8 @@ namespace Supermarket
                 int numOfPositions = rdm.Next(minNumOfPositions, maxNumOfPositions);
                 Random randomOrderBy = new Random((int)DateTime.Now.Ticks);
                 List<Product> storageList = products.OrderBy(x => randomOrderBy.Next()).ToList();
-                storageList.RemoveRange(0, numOfPositions);
-                Random amountRandom = new Random((int)DateTime.Now.Ticks);
-                foreach (var product in storageList)
-                {
-
-                    foreach (var storageProduct in products)
-                    {
-                        if (product == storageProduct)
-                        {
-                            product.Amount = amountRandom.Next(1, storageProduct.Amount);
-                            Thread.Sleep(20);
-                            break;
-                        }
-                    }
-                }
+                storageList.RemoveRange(0, numOfPositions);               
+                
                 return storageList;           
             
         }

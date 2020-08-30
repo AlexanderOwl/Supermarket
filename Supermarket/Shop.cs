@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Supermarket
 {
@@ -14,9 +15,7 @@ namespace Supermarket
             Console.WriteLine(date.ToShortDateString());
             Console.WriteLine("Hi there! Our store is open!");
             Storage storage = new Storage();
-            List<Product> availableProducts = new List<Product>();
-            availableProducts = storage.ProductGenerator();
-
+            List<Product> availableProducts = storage.ProductGenerator();   
             return availableProducts;
         }
 
@@ -133,7 +132,17 @@ namespace Supermarket
                             {
                                 if (avProd.Amount < prod.Amount)
                                 {
-                                    Console.WriteLine($"\nSorry, but we don't have this product in this amount");
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine($" Sorry, but we don't have this product in this amount");
+                                    Console.ResetColor();
+                                    Console.WriteLine($"Want buy {avProd.Amount} pc? y/n");
+
+                                    ConsoleKey key = Console.ReadKey().Key;
+                                    if(key == ConsoleKey.Y)
+                                    {
+                                        sum += avProd.Price * avProd.Amount;
+                                        toBuy.Add(avProd);
+                                    }                                    
                                 }
                                 else
                                 {
