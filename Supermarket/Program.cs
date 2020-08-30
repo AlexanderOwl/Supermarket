@@ -25,6 +25,7 @@ namespace Supermarket
             shop.Seller(customers, productsInShop);
             date.AddDays(1);
             //} while();
+            // did some changes
         }
         
     }
