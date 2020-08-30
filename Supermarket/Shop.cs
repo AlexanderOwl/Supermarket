@@ -158,7 +158,7 @@ namespace Supermarket
                 }
                 if (sum <= item.Cash)
                 {
-                    availableProducts = GenerateCheck(toBuy, sum, availableProducts, item.Cash,true);
+                    availableProducts = GenerateCheck(toBuy, sum, availableProducts, item.Cash, true);
                 }
                 else
                 {
