@@ -300,7 +300,7 @@ namespace Supermarket
             }
             else if (_statistic.TodaySold.Count == 0 && _iteration > 1)
             {
-                Console.WriteLine("\nNobody have bought smth yet!");
+                Console.WriteLine("\nNobody have bought smth today!");
             }
             else
             {
