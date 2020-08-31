@@ -20,8 +20,6 @@ namespace Supermarket
             int max = 20;
             List<Product> products = new List<Product>()
             {
-
-
                 new Product("Battery A", "Small", rdm.Next(min, max), 7, date.AddDays(6)),
                 new Product("'Orbit'", "Small", rdm.Next(min, max), 1, date.AddDays(3)),
                 new Product("KitKat", "Small", rdm.Next(min, max), 3, date.AddDays(1)),
@@ -40,7 +38,7 @@ namespace Supermarket
                 new Product("Chair", "Large", rdm.Next(min, max), 10, date.AddDays(7)),
                 new Product("Pillow", "Large", rdm.Next(min, max), 10, date.AddDays(7)),
                 new Product("Chair", "Large", rdm.Next(min, max), 10, date.AddDays(4)),
-                new Product("Vase", "Large", rdm.Next(min, max), 15, date.AddDays(7)),
+                new Product("Vase", "Large", rdm.Next(min, max), 15, date.AddDays(7)),        
                 new Product("Computer", "Large", rdm.Next(min, max), 25, date.AddDays(7)),
                 new Product("Microwave", "Large", rdm.Next(min, max), 30, date.AddDays(4))
 

@@ -11,12 +11,13 @@ namespace Supermarket
         Shelf smallShelf = new Shelf();
         Shelf middleShelf = new Shelf();
         Shelf largeShelf = new Shelf();
-        List<Product> TodaySold;// = new List<Product>();
-        Dictionary<int, List<Product>> WeeklyJournal = new Dictionary<int, List<Product>>(); 
+        private Statistic _statistic = new Statistic();
+        private int _iteration = 1;
       
         public void Menu(List<Product> productsInShop, ref DateTime date, List<Customer> customers)
         {
-            Console.WriteLine(date.DayOfWeek + ", " + date.ToShortDateString());
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine($"{date.DayOfWeek}, {date.ToShortDateString()}");
             Console.WriteLine("Welcome to console SuperPuperMarket!");
             Console.WriteLine("0 - exit" +
                 "\n1 - day stat" +
@@ -29,11 +30,13 @@ namespace Supermarket
                 case '1':
                     {
                         // статистика дня
+                        TodaySoldProducts(date, _iteration);
                         break;
                     }
                 case '2':
                     {
                         // статистика недели
+                        WeeklySold();
                         break;
                     }
                 case '3':
@@ -52,6 +55,7 @@ namespace Supermarket
                     }
                 default: break;
             }
+            _iteration++;
         }
 
         public void OpenShop(List<Product> productsInShop, DateTime date, List<Customer> customers)
@@ -62,6 +66,7 @@ namespace Supermarket
             Seller(customers, productsInShop);
             date.AddDays(1);
         }
+
         public List<Product> Welcome(DateTime date)
         {
             Console.WriteLine(date.DayOfWeek+", "+date.ToShortDateString());
@@ -138,6 +143,7 @@ namespace Supermarket
             Console.WriteLine("...press any key");
             Console.ReadKey();
         }
+
         public List<Customer> Queue()
         {
             Random rdm = new Random();
@@ -154,8 +160,7 @@ namespace Supermarket
 
         public void Seller(List<Customer> customers, List<Product> availableProducts)
         {
-            //List<Product> newProductsInShop = new List<Product>();
-            //newProductsInShop = availableProducts;
+            _statistic.TodaySold = new List<Product>();
             foreach (Customer item in customers)
             {
                 Console.WriteLine($"\nHello, {item.Name}. What you would like to buy?");
@@ -199,9 +204,7 @@ namespace Supermarket
                                     Console.ResetColor();
                                     Pause();
                                 }
-
                             }
-
                             break;
                         }
                     }
@@ -213,23 +216,25 @@ namespace Supermarket
                 else
                 {
                     GenerateCheck(toBuy, sum, availableProducts, item.Cash, false);
-                    Console.WriteLine($"\nAmount: {sum}$ ");
                     Console.WriteLine($"\nSorry, but you have only {item.Cash}$, that's not enough.");
                     Pause();
                 }
-            }            
+            }
+            List<Product> val = new List<Product>();
+            val = _statistic.TodaySold;
+            _statistic.WeeklyJournal.Add(_iteration, val);                        
         }
 
         public List<Product> GenerateCheck(List<Product> productsToBuy, int amount, List<Product> productsInShop, int cash, bool enoughMoney)
         {            
-            TodaySold = new List<Product>();
+            List<Product> toBuy = new List<Product>();
             Console.WriteLine("\n\nYour reciepe");
             foreach (Product prod in productsToBuy)
             {
                 Console.WriteLine($"{prod.Name} (x{prod.Amount}) - {prod.Amount * prod.Price}$");
                 if (enoughMoney)
                 {
-                    TodaySold.Add(prod);
+                    toBuy.Add(prod);
                     foreach (var avProd in productsInShop)
                     {
                         if (avProd.Name == prod.Name)
@@ -242,7 +247,6 @@ namespace Supermarket
                             {
                                 avProd.Amount = avProd.Amount - prod.Amount;
                             }
-
                             break;
                         }
                     }
@@ -252,42 +256,116 @@ namespace Supermarket
             Console.WriteLine($"Amount: {amount}$ ");
             if (enoughMoney) 
             {
+                AddStatisticToDays(toBuy);
                 Console.WriteLine($"\n Yours {cash}, your change - {cash - amount}$ ");
                 Pause();
             }
             return productsInShop;
         }
         
-        public void TodaySoldProducts(DateTime date)
-        { 
-            Console.WriteLine("Today our store sold:");
-            int amount = 0;
-            foreach (Product prod in TodaySold)
+        public void AddStatisticToDays(List<Product> sold)
+        {
+            if (_statistic.TodaySold.Count == 0)
             {
-                amount += prod.Price*prod.Amount;
-                Console.WriteLine($"{prod.Name}\t{prod.Amount}\t{prod.Price*prod.Amount}");
-            } 
-            Console.WriteLine("-------------------------------");
-            Console.WriteLine($"Amount: {amount}$ ");
-            Pause();
-           // WeeklyJournal
+                _statistic.TodaySold = sold;
+            }
+            else
+            {
+                foreach (Product item in sold)
+                {
+                    bool repeat = false;
+                    foreach (Product prod in _statistic.TodaySold)
+                    {
+                        if (prod.Name == item.Name)
+                        {
+                            prod.Amount += item.Amount;
+                            repeat = true;
+                            break;
+                        }
+                    }
+                    if (!repeat)
+                    {
+                        _statistic.TodaySold.Add(item);
+                    }
+                }
+            }
         }
 
-        //public void WeeklySoldProducts(DateTime date)
-        //{ 
-        //    WeeklyJournal.Add(date.ToShortDateString, TodaySold);
-        //    if (WeeklyJournal.Count == 7)
-        //   {
-        //        List<Product> WeeklySold = new List<Product>();
-          //      foreach (var pair in WeeklyJournal)
-	        //    {
-              //      foreach (Product prod in pair.Value)
-	            //    {
-                  //      
-	              //  }
-	           // }
-           // }
-        //}
-      //  public Dictionary<int, Product> Statistic();
-    }
+        public void TodaySoldProducts(DateTime date, int iteration)
+        {
+            int amount = 0;
+            if (_statistic.TodaySold.Count == 0 && _iteration == 1)
+            {
+                Console.WriteLine("\nOur shop haven't worked yet!");
+            }
+            else if (_statistic.TodaySold.Count == 0 && _iteration > 1)
+            {
+                Console.WriteLine("\nNobody have bought smth today!");
+            }
+            else
+            {
+                Console.WriteLine("\nToday our store sold:");
+                foreach (Product prod in _statistic.TodaySold)
+                {
+                    amount += prod.Price * prod.Amount;
+                    Console.WriteLine($"{prod.Name}\t{prod.Amount}\t{prod.Price * prod.Amount}");
+                }
+                Console.WriteLine("-------------------------------");
+                Console.WriteLine($"Amount: {amount}$ \n");
+            }
+            Pause();
+        }
+
+        public void WeeklySold()
+       {
+            List<Product> weekDevision = new List<Product>();
+            int amount = 0, generalAmount = 0;
+            int count = 1;
+            if (_statistic.WeeklyJournal.Count == 0)
+            {
+                Console.WriteLine("\nNobody have bought smth yet!\n");
+            }
+            else
+            {
+                
+                foreach (var pair in _statistic.WeeklyJournal)
+                {
+
+                    int weeksNum = count / 7 + 1;
+                    if (count % 7 == 1)
+                    {
+                        weekDevision = pair.Value;
+                        if (count != 1)
+                        {
+                            Console.WriteLine("-------------------------------");
+                            Console.WriteLine($"Amount: {amount}$ ");
+                            generalAmount += amount;
+                            amount = 0;
+                        }
+                        Console.WriteLine($"\n\nWeek {weeksNum}:");
+                    }
+                    if (count % 7 == 0)
+                    {
+                        foreach (Product prod in weekDevision)
+                        {
+                            Console.WriteLine($"{prod.Name}\t{prod.Amount}\t{prod.Price * prod.Amount}$");
+                            amount += prod.Price * prod.Amount;
+                        }
+                    }
+                    else if (_iteration % 7 != 0 && weeksNum == _iteration / 7 + 1)
+                    {
+                        foreach (Product prod in weekDevision)
+                        {
+                            Console.WriteLine($"{prod.Name}\t{prod.Amount}\t{prod.Price * prod.Amount}$");
+                            amount += prod.Price * prod.Amount;
+                            generalAmount += amount;
+                        }
+                    }
+                    count++;
+                }
+                Console.WriteLine("-------------------------------");
+                Console.WriteLine($"\nGeneral: {generalAmount}$ \n");
+            }
+        }
+    }  
 }
