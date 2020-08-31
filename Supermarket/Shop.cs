@@ -14,7 +14,6 @@ namespace Supermarket
        List<Product> TodaySold;// = new List<Product>();
         Dictionary<int, List<Product>> WeeklyJournal = new Dictionary<int, List<Product>>();         
         List<Product> weeklySold = new List<Product>();//*/
-        Statistic statistic = new Statistic();
         private int _iteration = 1;
       
         public void Menu(List<Product> productsInShop, ref DateTime date, List<Customer> customers)
