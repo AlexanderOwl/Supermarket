@@ -23,20 +23,20 @@ namespace Supermarket
                 "\n2 - week stat" +
                 "\n3 - open cashdesk" +
                 "\n4 - next day");
-            ConsoleKey key = Console.ReadKey().Key;
+            char key = Console.ReadKey().KeyChar;
             switch (key)
             {
-                case ConsoleKey.NumPad1:
+                case '1':
                     {
                         // статистика дня
                         break;
                     }
-                case ConsoleKey.NumPad2:
+                case '2':
                     {
                         // статистика недели
                         break;
                     }
-                case ConsoleKey.NumPad3:
+                case '3':
                     {
                         Console.WriteLine();
                         OpenShop(productsInShop, date, customers);
@@ -44,7 +44,7 @@ namespace Supermarket
                         //добавить день
                         break;
                     }
-                case ConsoleKey.NumPad4:
+                case '4':
                     {
                         date = date.AddDays(1);
                         //добавить день

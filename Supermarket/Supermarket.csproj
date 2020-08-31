@@ -49,6 +49,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shelf.cs" />
     <Compile Include="Shop.cs" />
+    <Compile Include="Statistic.cs" />
     <Compile Include="Storage.cs" />
   </ItemGroup>
   <ItemGroup>
