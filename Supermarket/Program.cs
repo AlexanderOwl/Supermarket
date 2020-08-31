@@ -16,6 +16,7 @@ namespace Supermarket
             do
             {
                 shop.Menu(productsInShop, ref date, customers);
+                Console.Clear();
             } while(true);
         }
 
