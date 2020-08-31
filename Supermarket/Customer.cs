@@ -24,8 +24,8 @@ namespace Supermarket
         }
         static List<Product> ShopingListGenerator(List<Product> uvailableShopProducts)
         {
-            int minNumOfPositions = 0;
-            int maxNumOfPositions = 6;
+            int minNumOfPositions = uvailableShopProducts.Count/2;
+            int maxNumOfPositions = uvailableShopProducts.Count;
             Random rdm = new Random();
             int NumOfPositions = rdm.Next(minNumOfPositions, maxNumOfPositions);
             Random randomOrderBy = new Random();
@@ -39,7 +39,7 @@ namespace Supermarket
                 {
                     if(product == storageProduct)
                     {
-                        product.Amount = amountRandom.Next(1, storageProduct.Amount);
+                        product.Amount = amountRandom.Next(1, storageProduct.Amount/2);
                         Thread.Sleep(20);
                         break;
                     }
