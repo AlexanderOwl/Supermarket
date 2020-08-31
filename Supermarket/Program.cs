@@ -14,13 +14,11 @@ namespace Supermarket
             List<Customer> customers = new List<Customer>();
             
             date = DateTime.Today;
-
             do
             {
             shop.Menu(productsInShop, ref date, customers);
 
             } while(true);
-            // did some changes
         }
 
     }

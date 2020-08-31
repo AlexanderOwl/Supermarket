@@ -11,6 +11,9 @@ namespace Supermarket
         Shelf smallShelf = new Shelf();
         Shelf middleShelf = new Shelf();
         Shelf largeShelf = new Shelf();
+        List<Product> TodaySold;// = new List<Product>();
+        Dictionary<int, List<Product>> WeeklyJournal = new Dictionary<int, List<Product>>(); 
+      
         public void Menu(List<Product> productsInShop, ref DateTime date, List<Customer> customers)
         {
             Console.WriteLine(date.DayOfWeek + ", " + date.ToShortDateString());
@@ -61,7 +64,8 @@ namespace Supermarket
         }
         public List<Product> Welcome(DateTime date)
         {
-
+            Console.WriteLine(date.DayOfWeek+", "+date.ToShortDateString());
+          ///--------------------------------------------------
             Console.WriteLine("Hi there! Our store is open!");
             Storage storage = new Storage();
             List<Product> availableProducts = storage.ProductGenerator();
@@ -137,10 +141,9 @@ namespace Supermarket
         public List<Customer> Queue()
         {
             Random rdm = new Random();
-            int queueNumber = rdm.Next(2, 5);
             string[] names = new string[] { "Mary", "Nency", "Michale", "Fred", "Jina", "Marcus", "Peter", "Helen", "Oliv" };
             List<Customer> customersQueue = new List<Customer>();
-            for (int i = 0; i < queueNumber; i++)
+            for (int i = 0; i < 2; i++)
             {
                 Customer customer = new Customer(names[rdm.Next(0, 8)], i);
                 //удалить одинаковых людей
@@ -214,24 +217,23 @@ namespace Supermarket
                     Console.WriteLine($"\nSorry, but you have only {item.Cash}$, that's not enough.");
                     Pause();
                 }
-            }
-
-            // return newProductsInShop;
+            }            
         }
 
         public List<Product> GenerateCheck(List<Product> productsToBuy, int amount, List<Product> productsInShop, int cash, bool enoughMoney)
-        {
+        {            
+            TodaySold = new List<Product>();
             Console.WriteLine("\n\nYour reciepe");
             foreach (Product prod in productsToBuy)
             {
                 Console.WriteLine($"{prod.Name} (x{prod.Amount}) - {prod.Amount * prod.Price}$");
                 if (enoughMoney)
                 {
+                    TodaySold.Add(prod);
                     foreach (var avProd in productsInShop)
                     {
                         if (avProd.Name == prod.Name)
                         {
-                            //int index = productsInShop.IndexOf(prod);
                             if (avProd.Amount == prod.Amount)
                             {
                                 productsInShop.Remove(prod);
@@ -248,10 +250,44 @@ namespace Supermarket
             }
             Console.WriteLine("-------------------------------");
             Console.WriteLine($"Amount: {amount}$ ");
-            Console.WriteLine($"\n Yours {cash}, your change: {cash - amount}$ ");
-            Pause();
+            if (enoughMoney) 
+            {
+                Console.WriteLine($"\n Yours {cash}, your change - {cash - amount}$ ");
+                Pause();
+            }
             return productsInShop;
         }
+        
+        public void TodaySoldProducts(DateTime date)
+        { 
+            Console.WriteLine("Today our store sold:");
+            int amount = 0;
+            foreach (Product prod in TodaySold)
+            {
+                amount += prod.Price*prod.Amount;
+                Console.WriteLine($"{prod.Name}\t{prod.Amount}\t{prod.Price*prod.Amount}");
+            } 
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine($"Amount: {amount}$ ");
+            Pause();
+           // WeeklyJournal
+        }
 
+        //public void WeeklySoldProducts(DateTime date)
+        //{ 
+        //    WeeklyJournal.Add(date.ToShortDateString, TodaySold);
+        //    if (WeeklyJournal.Count == 7)
+        //   {
+        //        List<Product> WeeklySold = new List<Product>();
+          //      foreach (var pair in WeeklyJournal)
+	        //    {
+              //      foreach (Product prod in pair.Value)
+	            //    {
+                  //      
+	              //  }
+	           // }
+           // }
+        //}
+      //  public Dictionary<int, Product> Statistic();
     }
 }
