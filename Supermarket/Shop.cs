@@ -13,10 +13,59 @@ namespace Supermarket
         Shelf largeShelf = new Shelf();
         List<Product> TodaySold;// = new List<Product>();
         Dictionary<int, List<Product>> WeeklyJournal = new Dictionary<int, List<Product>>(); 
+      
+        public void Menu(List<Product> productsInShop, ref DateTime date, List<Customer> customers)
+        {
+            Console.WriteLine(date.DayOfWeek + ", " + date.ToShortDateString());
+            Console.WriteLine("Welcome to console SuperPuperMarket!");
+            Console.WriteLine("0 - exit" +
+                "\n1 - day stat" +
+                "\n2 - week stat" +
+                "\n3 - open cashdesk" +
+                "\n4 - next day");
+            ConsoleKey key = Console.ReadKey().Key;
+            switch (key)
+            {
+                case ConsoleKey.NumPad1:
+                    {
+                        // статистика дня
+                        break;
+                    }
+                case ConsoleKey.NumPad2:
+                    {
+                        // статистика недели
+                        break;
+                    }
+                case ConsoleKey.NumPad3:
+                    {
+                        Console.WriteLine();
+                        OpenShop(productsInShop, date, customers);
+                        date.AddDays(1);
+                        //добавить день
+                        break;
+                    }
+                case ConsoleKey.NumPad4:
+                    {
+                        date.AddDays(1);
+                        //добавить день
+                        break;
+                    }
+                default: break;
+            }
+        }
 
+        public void OpenShop(List<Product> productsInShop, DateTime date, List<Customer> customers)
+        {
+            productsInShop = Welcome(date);
+            ShelfShow(productsInShop);
+            customers = Queue();
+            Seller(customers, productsInShop);
+            date.AddDays(1);
+        }
         public List<Product> Welcome(DateTime date)
         {
             Console.WriteLine(date.DayOfWeek+", "+date.ToShortDateString());
+          ///--------------------------------------------------
             Console.WriteLine("Hi there! Our store is open!");
             Storage storage = new Storage();
             List<Product> availableProducts = storage.ProductGenerator();
@@ -159,7 +208,7 @@ namespace Supermarket
                 }
                 if (sum <= item.Cash)
                 {
-                    availableProducts = GenerateCheck(toBuy, sum, availableProducts, item.Cash,true);
+                    availableProducts = GenerateCheck(toBuy, sum, availableProducts, item.Cash, true);
                 }
                 else
                 {

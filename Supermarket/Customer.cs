@@ -22,22 +22,6 @@ namespace Supermarket
             this.ProductsList = ShopingListGenerator(_storage.ProductGenerator());
             this.Cash = AmountGenerator(20, 1000);
         }
-
-        //public List<Product> GenerateBuyList()
-        //{
-        //    List<Product> possibleProducts = _storage.ProductGenerator();
-        //    Random rdm = new Random();
-        //    foreach (Product item in possibleProducts)
-        //    {
-        //        if (AmountGenerator(0, 5) <= 4)
-        //        {
-        //            item.Amount = rdm.Next(1, 5);
-        //            ProductsList.Add(item);
-        //        }
-        //    }
-        //    return ProductsList;
-        //}
-
         static List<Product> ShopingListGenerator(List<Product> uvailableShopProducts)
         {
             int minNumOfPositions = 0;
