@@ -40,13 +40,13 @@ namespace Supermarket
                     {
                         Console.WriteLine();
                         OpenShop(productsInShop, date, customers);
-                        date.AddDays(1);
+                        date = date.AddDays(1);
                         //добавить день
                         break;
                     }
                 case ConsoleKey.NumPad4:
                     {
-                        date.AddDays(1);
+                        date = date.AddDays(1);
                         //добавить день
                         break;
                     }
