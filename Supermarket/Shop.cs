@@ -29,6 +29,7 @@ namespace Supermarket
                 case ConsoleKey.NumPad1:
                     {
                         // статистика дня
+                        TodaySoldProducts(date);
                         break;
                     }
                 case ConsoleKey.NumPad2:
@@ -62,6 +63,7 @@ namespace Supermarket
             Seller(customers, productsInShop);
             date.AddDays(1);
         }
+
         public List<Product> Welcome(DateTime date)
         {
             Console.WriteLine(date.DayOfWeek+", "+date.ToShortDateString());
@@ -213,7 +215,6 @@ namespace Supermarket
                 else
                 {
                     GenerateCheck(toBuy, sum, availableProducts, item.Cash, false);
-                    Console.WriteLine($"\nAmount: {sum}$ ");
                     Console.WriteLine($"\nSorry, but you have only {item.Cash}$, that's not enough.");
                     Pause();
                 }
@@ -242,7 +243,6 @@ namespace Supermarket
                             {
                                 avProd.Amount = avProd.Amount - prod.Amount;
                             }
-
                             break;
                         }
                     }
@@ -260,17 +260,23 @@ namespace Supermarket
         
         public void TodaySoldProducts(DateTime date)
         { 
-            Console.WriteLine("Today our store sold:");
             int amount = 0;
-            foreach (Product prod in TodaySold)
+            if (TodaySold == null)
             {
-                amount += prod.Price*prod.Amount;
-                Console.WriteLine($"{prod.Name}\t{prod.Amount}\t{prod.Price*prod.Amount}");
-            } 
-            Console.WriteLine("-------------------------------");
-            Console.WriteLine($"Amount: {amount}$ ");
+                Console.WriteLine("\nOur shop haven't worked yet!");
+            }
+            else 
+            {
+                Console.WriteLine("Today our store sold:");
+                foreach (Product prod in TodaySold)
+                {
+                    amount += prod.Price*prod.Amount;
+                    Console.WriteLine($"{prod.Name}\t{prod.Amount}\t{prod.Price*prod.Amount}");
+                } 
+                Console.WriteLine("-------------------------------");
+                Console.WriteLine($"Amount: {amount}$ ");
+            }
             Pause();
-           // WeeklyJournal
         }
 
         //public void WeeklySoldProducts(DateTime date)
