@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Supermarket
@@ -14,7 +13,7 @@ namespace Supermarket
         private Statistic _statistic = new Statistic();
         private int _iteration = 0;
 
-        public void Menu(List<Product> productsInShop, ref DateTime date, List<Customer> customers)
+        public List<Product> Menu(List<Product> productsInShop, ref DateTime date, List<Customer> customers)
         {
             Console.WriteLine("-------------------------------");
             Console.WriteLine($"{date.DayOfWeek}, {date.ToShortDateString()}");
@@ -22,8 +21,7 @@ namespace Supermarket
             Console.WriteLine("0 - exit" +
                 "\n1 - day stat" +
                 "\n2 - week stat" +
-                "\n3 - open cashdesk"); // +
-               // "\n4 - next day");
+                "\n3 - open cashdesk"); 
             char key = Console.ReadKey().KeyChar;
             switch (key)
             {
@@ -42,54 +40,89 @@ namespace Supermarket
                 case '3':
                     {
                         Console.WriteLine();
-                        OpenShop(productsInShop, date, customers);
+                        productsInShop = OpenShop(productsInShop, date, customers);
                         date = date.AddDays(1);
-                        //добавить день
+                        // добавить день
                         break;
                     }
                 case '0':
                     {
+                        // выйти из приложения
                         Environment.Exit(0);
-                        //добавить день
                         break;
                     }
                 default: break;
             }
+            return productsInShop;
         }
 
-        public void OpenShop(List<Product> productsInShop, DateTime date, List<Customer> customers)
+        public List<Product> OpenShop(List<Product> productsInShop, DateTime date, List<Customer> customers)
         {
-            productsInShop = Welcome(date);
-            ShelfShow(productsInShop);
+            Welcome(date);
+            productsInShop = ShelfShow(productsInShop);
             customers = Queue();
-            Seller(customers, productsInShop);
+            productsInShop = Seller(customers, productsInShop);
             date.AddDays(1);
             _iteration++;
+            return productsInShop;
         }
 
-        public List<Product> Welcome(DateTime date)
+        public void Welcome(DateTime date)
         {
-            Console.WriteLine(date.DayOfWeek+", "+date.ToShortDateString());
-          ///--------------------------------------------------
+            Console.WriteLine(date.DayOfWeek + ", " + date.ToShortDateString());
             Console.WriteLine("Hi there! Our store is open!");
-            Storage storage = new Storage();
-            List<Product> availableProducts = storage.ProductGenerator();
-            return availableProducts;
         }
 
-        public void ShelfShow(List<Product> availableProducts)
+        public List<Product> ShelfShow(List<Product> availableProducts)
         {
-
-            largeShelf.Products = availableProducts.Where(product => product.Size == "Large").ToList();
-            middleShelf.Products = availableProducts.Where(product => product.Size == "Middle").ToList();
-            smallShelf.Products = availableProducts.Where(product => product.Size == "Small").ToList();
-            Random randomRemoveRange = new Random((int)DateTime.Now.Ticks);
-            largeShelf.Products.RemoveRange(2, randomRemoveRange.Next(0, largeShelf.Products.Count - 2));
-            Thread.Sleep(20);
-            middleShelf.Products.RemoveRange(2, randomRemoveRange.Next(0, middleShelf.Products.Count - 2));
-            Thread.Sleep(20);
-            smallShelf.Products.RemoveRange(2, randomRemoveRange.Next(0, smallShelf.Products.Count - 2));
-
+            Console.Clear();
+            Storage storage = new Storage();
+            if (availableProducts.Count == 0)
+            {
+                availableProducts = storage.ProductGenerator();
+                //}
+                largeShelf.Products = availableProducts.Where(product => product.Size == "Large").ToList();
+                middleShelf.Products = availableProducts.Where(product => product.Size == "Middle").ToList();
+                smallShelf.Products = availableProducts.Where(product => product.Size == "Small").ToList();
+                Random randomRemoveRange = new Random((int)DateTime.Now.Ticks);
+                largeShelf.Products.RemoveRange(2, randomRemoveRange.Next(0, largeShelf.Products.Count - 2));
+                Thread.Sleep(20);
+                middleShelf.Products.RemoveRange(2, randomRemoveRange.Next(0, middleShelf.Products.Count - 2));
+                Thread.Sleep(20);
+                smallShelf.Products.RemoveRange(2, randomRemoveRange.Next(0, smallShelf.Products.Count - 2));
+                availableProducts.Clear();
+                foreach (Product prod in smallShelf.Products)
+                {
+                    availableProducts.Add(prod);
+                }
+                foreach (Product prod in middleShelf.Products)
+                {
+                    availableProducts.Add(prod);
+                }
+                foreach (Product prod in largeShelf.Products)
+                {
+                    availableProducts.Add(prod);
+                }
+            }
+            else
+            {
+                largeShelf.Products = availableProducts.Where(product => product.Size == "Large").ToList();
+                middleShelf.Products = availableProducts.Where(product => product.Size == "Middle").ToList();
+                smallShelf.Products = availableProducts.Where(product => product.Size == "Small").ToList();
+                availableProducts.Clear();
+                foreach (Product prod in smallShelf.Products)
+                {
+                    availableProducts.Add(prod);
+                }
+                foreach (Product prod in middleShelf.Products)
+                {
+                    availableProducts.Add(prod);
+                }
+                foreach (Product prod in largeShelf.Products)
+                {
+                    availableProducts.Add(prod);
+                }
+            }
             Console.WriteLine();
             Console.WriteLine("GOODS");
             Console.Write("S");
@@ -134,8 +167,8 @@ namespace Supermarket
                 index++;
             }
             Console.WriteLine();
-
             Pause();
+            return availableProducts;
         }
 
         public void Pause()
@@ -158,7 +191,7 @@ namespace Supermarket
             return customersQueue;
         }
 
-        public void Seller(List<Customer> customers, List<Product> availableProducts)
+        public List<Product> Seller(List<Customer> customers, List<Product> availableProducts)
         {
             _statistic.TodaySold = new List<Product>();
             foreach (Customer item in customers)
@@ -166,6 +199,7 @@ namespace Supermarket
                 Console.WriteLine($"\nHello, {item.Name}. What you would like to buy?");
                 List<Product> toBuy = new List<Product>();
                 int sum = 0;
+                bool found = false;
                 foreach (Product prod in item.ProductsList)
                 {
                     Console.Write($"\n{prod.Name}, {prod.Amount} pc.");
@@ -174,16 +208,16 @@ namespace Supermarket
                     {
                         if (avProd.Name == prod.Name)
                         {
+                            found = true;
                             if (avProd.Amount >= prod.Amount)
                             {
 
                                 sum += prod.Price * prod.Amount;
                                 toBuy.Add(prod);
                             }
-                            else
+                            else if (avProd.Amount < prod.Amount)                                
                             {
-                                if (avProd.Amount < prod.Amount)
-                                {
+                                
                                     Console.ForegroundColor = ConsoleColor.Red;
                                     Console.WriteLine($" Sorry, we have just {avProd.Amount} pc");
                                     Console.ResetColor();
@@ -196,17 +230,16 @@ namespace Supermarket
                                         sum += avProd.Price * avProd.Amount;
                                         toBuy.Add(avProd);
                                     }
-                                }
-                                else
-                                {
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine($"\nSorry, but we don't have this product right now");
-                                    Console.ResetColor();
-                                    Pause();
-                                }
                             }
                             break;
                         }
+                    }
+                    if (!found)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"\nSorry, but we don't have this product right now");
+                        Console.ResetColor();
+                        Pause();
                     }
                 }
                 if (sum <= item.Cash)
@@ -222,42 +255,49 @@ namespace Supermarket
             }
             List<Product> val = new List<Product>(_statistic.TodaySold);
             AddStatisticToWeeks(_iteration, val);
+            return availableProducts;
         }
 
         public List<Product> GenerateCheck(List<Product> productsToBuy, int amount, List<Product> productsInShop, int cash, bool enoughMoney)
-        {
-            List<Product> toBuy = new List<Product>();
-            Console.WriteLine("\n\nYour reciepe");
-            foreach (Product prod in productsToBuy)
+        {           
+            if (productsToBuy.Count == 0)
             {
-                Console.WriteLine($"{prod.Name} (x{prod.Amount}) - {prod.Amount * prod.Price}$");
-                if (enoughMoney)
+                Console.WriteLine("Please, visit us next time!");
+                Pause();
+            }
+            else
+            {
+                Console.WriteLine("\n\nYour reciepe");
+                foreach (Product prod in productsToBuy)
                 {
-                    toBuy.Add(prod);
-                    foreach (var avProd in productsInShop)
+                    Console.WriteLine($"{prod.Name} (x{prod.Amount}) - {prod.Amount * prod.Price}$");
+                    if (enoughMoney)
                     {
-                        if (avProd.Name == prod.Name)
+                        foreach (var avProd in productsInShop)
                         {
-                            if (avProd.Amount == prod.Amount)
+                            if (avProd.Name == prod.Name)
                             {
-                                productsInShop.Remove(prod);
+                                if (avProd.Amount == prod.Amount)
+                                {
+                                    productsInShop.Remove(prod);
+                                }
+                                else
+                                {
+                                    avProd.Amount = avProd.Amount - prod.Amount;
+                                }
+                                break;
                             }
-                            else
-                            {
-                                avProd.Amount = avProd.Amount - prod.Amount;
-                            }
-                            break;
                         }
                     }
                 }
-            }
-            Console.WriteLine("-------------------------------");
-            Console.WriteLine($"Amount: {amount}$ ");
-            if (enoughMoney)
-            {
-                AddStatisticToDays(toBuy);
-                Console.WriteLine($"\n Yours {cash}, your change - {cash - amount}$ ");
-                Pause();
+                Console.WriteLine("-------------------------------");
+                Console.WriteLine($"Amount: {amount}$ ");
+                if (enoughMoney)
+                {
+                    AddStatisticToDays(productsToBuy);
+                    Console.WriteLine($"\n Yours {cash}, your change - {cash - amount}$ ");
+                    Pause();
+                }
             }
             return productsInShop;
         }
@@ -299,7 +339,7 @@ namespace Supermarket
             }
             else
             {
-                Console.WriteLine("\nToday our store sold:");
+                Console.WriteLine($"\nYesterday, {date.ToShortDateString()}, our store sold:");
                 foreach (Product prod in _statistic.TodaySold)
                 {
                     amount += prod.Price * prod.Amount;
@@ -311,7 +351,7 @@ namespace Supermarket
                     Console.ForegroundColor = ConsoleColor.DarkGreen;
                     Console.Write(" = ");
                     Console.ResetColor();
-                    Console.Write(prod.Price * prod.Amount+"$");
+                    Console.Write(prod.Price * prod.Amount + "$");
                     Console.WriteLine();
                 }
                 Console.WriteLine("-------------------------------");
@@ -343,7 +383,7 @@ namespace Supermarket
                     {
                         weekDevision.Clear();
                         if (count != 1) amount = 0;
-                        Console.WriteLine($"\n\nWeek {weeksNum}:");
+                        Console.WriteLine($"\nWeek {weeksNum}:\n");
                     }
                     /// Работаем с неполной неделей (которая сейчас)
                     /// сначала наполняем список разбиения по неделям "weekDevision"
