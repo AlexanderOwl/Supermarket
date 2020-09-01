@@ -15,7 +15,7 @@ namespace Supermarket
             date = DateTime.Today;
             do
             {
-                shop.Menu(productsInShop, ref date, customers);
+                productsInShop = shop.Menu(productsInShop, ref date, customers);
                 Console.Clear();
             } while(true);
         }
