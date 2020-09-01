@@ -39,7 +39,7 @@ namespace Supermarket
                 {
                     if(product == storageProduct)
                     {
-                        product.Amount = amountRandom.Next(1, storageProduct.Amount/2);
+                        product.Amount = amountRandom.Next(1, storageProduct.Amount/2+1);
                         Thread.Sleep(20);
                         break;
                     }

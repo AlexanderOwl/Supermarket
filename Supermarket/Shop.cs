@@ -422,6 +422,7 @@ namespace Supermarket
                 Console.WriteLine("-------------------------------");
                 Console.WriteLine($"\nGeneral: {generalAmount}$ \n");
             }
+            Pause();
         }
     }
 }
