@@ -14,16 +14,17 @@ namespace Supermarket
         private Statistic _statistic = new Statistic();
         private int _iteration = 0;
 
-        public void Menu(List<Product> productsInShop, ref DateTime date, List<Customer> customers)
+        public List<Product> Menu(List<Product> productsInShop, ref DateTime date, List<Customer> customers)
         {
             Console.WriteLine("-------------------------------");
             Console.WriteLine($"{date.DayOfWeek}, {date.ToShortDateString()}");
+            //List<Product> availableProducts = new ProductGenerator();
             Console.WriteLine("Welcome to console SuperPuperMarket!");
             Console.WriteLine("0 - exit" +
                 "\n1 - day stat" +
                 "\n2 - week stat" +
                 "\n3 - open cashdesk"); // +
-               // "\n4 - next day");
+                                        // "\n4 - next day");
             char key = Console.ReadKey().KeyChar;
             switch (key)
             {
@@ -42,7 +43,7 @@ namespace Supermarket
                 case '3':
                     {
                         Console.WriteLine();
-                        OpenShop(productsInShop, date, customers);
+                        productsInShop = OpenShop(productsInShop, date, customers);
                         date = date.AddDays(1);
                         //добавить день
                         break;
@@ -55,26 +56,31 @@ namespace Supermarket
                     }
                 default: break;
             }
+            return productsInShop;
         }
 
-        public void OpenShop(List<Product> productsInShop, DateTime date, List<Customer> customers)
+        public List<Product> OpenShop(List<Product> productsInShop, DateTime date, List<Customer> customers)
         {
-            productsInShop = Welcome(date);
+            productsInShop = Welcome(date, productsInShop);
             ShelfShow(productsInShop);
             customers = Queue();
-            Seller(customers, productsInShop);
+            productsInShop = Seller(customers, productsInShop);
             date.AddDays(1);
             _iteration++;
+            return productsInShop;
         }
 
-        public List<Product> Welcome(DateTime date)
+        public List<Product> Welcome(DateTime date, List<Product> productsInShop)
         {
-            Console.WriteLine(date.DayOfWeek+", "+date.ToShortDateString());
-          ///--------------------------------------------------
+            Console.WriteLine(date.DayOfWeek + ", " + date.ToShortDateString());
+            ///--------------------------------------------------
             Console.WriteLine("Hi there! Our store is open!");
-            Storage storage = new Storage();
-            List<Product> availableProducts = storage.ProductGenerator();
-            return availableProducts;
+            Storage storage = new Storage();           
+            if (productsInShop.Count == 0)
+            {
+                productsInShop = storage.ProductGenerator();
+            }
+            return productsInShop;
         }
 
         public void ShelfShow(List<Product> availableProducts)
@@ -158,7 +164,7 @@ namespace Supermarket
             return customersQueue;
         }
 
-        public void Seller(List<Customer> customers, List<Product> availableProducts)
+        public List<Product> Seller(List<Customer> customers, List<Product> availableProducts)
         {
             _statistic.TodaySold = new List<Product>();
             foreach (Customer item in customers)
@@ -222,6 +228,7 @@ namespace Supermarket
             }
             List<Product> val = new List<Product>(_statistic.TodaySold);
             AddStatisticToWeeks(_iteration, val);
+            return availableProducts;
         }
 
         public List<Product> GenerateCheck(List<Product> productsToBuy, int amount, List<Product> productsInShop, int cash, bool enoughMoney)
@@ -311,7 +318,7 @@ namespace Supermarket
                     Console.ForegroundColor = ConsoleColor.DarkGreen;
                     Console.Write(" = ");
                     Console.ResetColor();
-                    Console.Write(prod.Price * prod.Amount+"$");
+                    Console.Write(prod.Price * prod.Amount + "$");
                     Console.WriteLine();
                 }
                 Console.WriteLine("-------------------------------");
@@ -422,6 +429,7 @@ namespace Supermarket
                 Console.WriteLine("-------------------------------");
                 Console.WriteLine($"\nGeneral: {generalAmount}$ \n");
             }
+            Pause();
         }
     }
 }

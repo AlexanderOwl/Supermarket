@@ -22,6 +22,7 @@ namespace Supermarket
             this.ProductsList = ShopingListGenerator(_storage.ProductGenerator());
             this.Cash = AmountGenerator(20, 1000);
         }
+
         static List<Product> ShopingListGenerator(List<Product> uvailableShopProducts)
         {
             int minNumOfPositions = uvailableShopProducts.Count/2;
@@ -39,7 +40,7 @@ namespace Supermarket
                 {
                     if(product == storageProduct)
                     {
-                        product.Amount = amountRandom.Next(1, storageProduct.Amount/2);
+                        product.Amount = amountRandom.Next(1, storageProduct.Amount);
                         Thread.Sleep(20);
                         break;
                     }
