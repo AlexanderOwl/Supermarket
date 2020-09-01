@@ -11,13 +11,13 @@ namespace Supermarket
         {
             Shop shop = new Shop();
             List<Product> productsInShop = new List<Product>();
-            List<Customer> customers = new List<Customer>();            
+            List<Customer> customers = new List<Customer>();
             date = DateTime.Today;
             do
             {
                 productsInShop = shop.Menu(productsInShop, ref date, customers);
                 Console.Clear();
-            } while(true);
+            } while (true);
         }
 
     }

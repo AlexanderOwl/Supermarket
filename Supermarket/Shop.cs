@@ -17,6 +17,7 @@ namespace Supermarket
         {
             Console.WriteLine("-------------------------------");
             Console.WriteLine($"{date.DayOfWeek}, {date.ToShortDateString()}");
+            //List<Product> availableProducts = new ProductGenerator();
             Console.WriteLine("Welcome to console SuperPuperMarket!");
             Console.WriteLine("0 - exit" +
                 "\n1 - day stat" +
