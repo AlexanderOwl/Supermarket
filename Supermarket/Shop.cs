@@ -69,8 +69,8 @@ namespace Supermarket
 
         public List<Product> Welcome(DateTime date)
         {
-            Console.WriteLine(date.DayOfWeek + ", " + date.ToShortDateString());
-            ///--------------------------------------------------
+            Console.WriteLine(date.DayOfWeek+", "+date.ToShortDateString());
+          ///--------------------------------------------------
             Console.WriteLine("Hi there! Our store is open!");
             Storage storage = new Storage();
             List<Product> availableProducts = storage.ProductGenerator();
@@ -303,7 +303,16 @@ namespace Supermarket
                 foreach (Product prod in _statistic.TodaySold)
                 {
                     amount += prod.Price * prod.Amount;
-                    Console.WriteLine($"{prod.Name}\t{prod.Amount}\t{prod.Price * prod.Amount}");
+                    Console.Write(prod.Name);
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.Write(" x ");
+                    Console.ResetColor();
+                    Console.Write(prod.Amount);
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.Write(" = ");
+                    Console.ResetColor();
+                    Console.Write(prod.Price * prod.Amount+"$");
+                    Console.WriteLine();
                 }
                 Console.WriteLine("-------------------------------");
                 Console.WriteLine($"Amount: {amount}$ \n");
