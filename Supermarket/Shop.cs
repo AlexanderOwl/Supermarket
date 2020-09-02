@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Supermarket
 {
@@ -256,6 +257,8 @@ namespace Supermarket
                 foreach (Product prod in productsToBuy)
                 {
                     Console.WriteLine($"{prod.Name} (x{prod.Amount}) - {prod.Amount * prod.Price}$");
+                    Console.Beep(500, 300);
+                    Thread.Sleep(200);
                     if (enoughMoney)
                     {
                         foreach (var avProd in productsInShop)
