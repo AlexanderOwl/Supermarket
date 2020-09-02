@@ -15,16 +15,17 @@ namespace Supermarket
         public string Name;
         private Storage _storage = new Storage();
 
-        public Customer(string Name, int QueueNumber)
+        public Customer(string Name, int QueueNumber, DateTime date)
         {
             this.QueueNumber = QueueNumber;
             this.Name = Name;
-            this.ProductsList = ShopingListGenerator(_storage.ProductGenerator());
+            this.ProductsList = ShopingListGenerator(_storage.ProductGenerator(date));
             this.Cash = AmountGenerator(20, 1000);
         }
+
         static List<Product> ShopingListGenerator(List<Product> uvailableShopProducts)
         {
-            int minNumOfPositions = uvailableShopProducts.Count/2;
+            int minNumOfPositions = uvailableShopProducts.Count / 2;
             int maxNumOfPositions = uvailableShopProducts.Count;
             Random rdm = new Random();
             int NumOfPositions = rdm.Next(minNumOfPositions, maxNumOfPositions);
@@ -34,12 +35,12 @@ namespace Supermarket
             Random amountRandom = new Random((int)DateTime.Now.Ticks);
             foreach (var product in shopingList)
             {
-                
+
                 foreach (var storageProduct in uvailableShopProducts)
                 {
-                    if(product == storageProduct)
+                    if (product == storageProduct)
                     {
-                        product.Amount = amountRandom.Next(1, storageProduct.Amount/2);
+                        product.Amount = amountRandom.Next(1, storageProduct.Amount);
                         Thread.Sleep(20);
                         break;
                     }
