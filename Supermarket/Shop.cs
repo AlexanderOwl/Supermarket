@@ -27,13 +27,15 @@ namespace Supermarket
                 case '1':
                     {
                         // статистика дня
-                        TodaySoldProducts(date, _iteration);
+                        _statistic.TodaySoldProducts(date, _iteration);
+                        Pause();
                         break;
                     }
                 case '2':
                     {
                         // статистика недели
-                        WeeklySold();
+                        _statistic.WeeklySold(_iteration);
+                        Pause();
                         break;
                     }
                 case '3':
@@ -166,7 +168,6 @@ namespace Supermarket
             for (int i = 0; i < 2; i++)
             {
                 Customer customer = new Customer(names[rdm.Next(0, 8)], i, date);
-                //удалить одинаковых людей
                 customersQueue.Add(customer);
             }
             return customersQueue;
@@ -235,7 +236,7 @@ namespace Supermarket
                 }
             }
             List<Product> val = new List<Product>(_statistic.TodaySold);
-            AddStatisticToWeeks(_iteration, val);
+            _statistic.AddStatisticToWeeks(_iteration, val);
             return availableProducts;
         }
 
@@ -243,7 +244,7 @@ namespace Supermarket
         {
             if (productsToBuy.Count == 0)
             {
-                Console.WriteLine("Please, visit us next time!");
+                Console.WriteLine("\nPlease, visit us next time!");
                 Pause();
             }
             else
@@ -275,175 +276,12 @@ namespace Supermarket
                 Console.WriteLine($"Amount: {amount}$ ");
                 if (enoughMoney)
                 {
-                    AddStatisticToDays(productsToBuy);
+                    _statistic.AddStatisticToDays(productsToBuy);
                     Console.WriteLine($"\n Yours {cash}, your change - {cash - amount}$ ");
                     Pause();
                 }
             }
             return productsInShop;
-        }
-
-        public void AddStatisticToDays(List<Product> sold)
-        {
-            if (_statistic.TodaySold.Count == 0)
-            {
-                _statistic.TodaySold = sold;
-            }
-            else
-            {
-                foreach (Product item in sold)
-                {
-                    bool repeat = false;
-                    foreach (Product prod in _statistic.TodaySold)
-                    {
-                        if (prod.Name == item.Name)
-                        {
-                            prod.Amount += item.Amount;
-                            repeat = true;
-                            break;
-                        }
-                    }
-                    if (!repeat)
-                    {
-                        _statistic.TodaySold.Add(item);
-                    }
-                }
-            }
-        }
-
-        public void TodaySoldProducts(DateTime date, int iteration)
-        {
-            int amount = 0;
-            if (_statistic.TodaySold.Count == 0)
-            {
-                Console.WriteLine("\nNo data for your request!");
-            }
-            else
-            {
-                Console.WriteLine($"\nYesterday, {date.ToShortDateString()}, our store sold:");
-                foreach (Product prod in _statistic.TodaySold)
-                {
-                    amount += prod.Price * prod.Amount;
-                    Console.Write(prod.Name);
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    Console.Write(" x ");
-                    Console.ResetColor();
-                    Console.Write(prod.Amount);
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    Console.Write(" = ");
-                    Console.ResetColor();
-                    Console.Write(prod.Price * prod.Amount + "$");
-                    Console.WriteLine();
-                }
-                Console.WriteLine("-------------------------------");
-                Console.WriteLine($"Amount: {amount}$ \n");
-            }
-            Pause();
-        }
-
-        public void AddStatisticToWeeks(int day, List<Product> sold)
-        {
-            _statistic.WeeklyJournal.Add(day, sold);
-        }
-
-        public void WeeklySold()
-        {
-            List<Product> weekDevision = new List<Product>();
-            int amount = 0, generalAmount = 0;
-            int count = 1;
-            if (_statistic.WeeklyJournal.Count == 0)
-            {
-                Console.WriteLine("\nNobody have bought smth yet!\n");
-            }
-            else
-            {
-                foreach (var pair in _statistic.WeeklyJournal)
-                {
-                    int weeksNum = count / 7 + 1;
-                    if (count % 7 == 1)
-                    {
-                        weekDevision.Clear();
-                        if (count != 1) amount = 0;
-                        Console.WriteLine($"\nWeek {weeksNum}:\n");
-                    }
-                    /// Работаем с неполной неделей (которая сейчас)
-                    /// сначала наполняем список разбиения по неделям "weekDevision"
-                    if (count % 7 != 0 && weeksNum == _iteration / 7 + 1)
-                    {
-                        foreach (Product prod in pair.Value)
-                        {
-                            bool repeat = false;
-                            foreach (Product item in weekDevision)
-                            {
-                                if (prod.Name == item.Name)
-                                {
-                                    int n = prod.Amount;
-                                    item.Amount += n;
-                                    repeat = true;
-                                    break;
-                                }
-                            }
-                            if (!repeat)
-                            {
-                                Product unicProd = new Product(prod.Name, prod.Size, prod.Amount, prod.Price, prod.ExpirationDate);
-                                weekDevision.Add(unicProd);
-                            }
-                        }
-                        // Выводим список разбиения по неделям "weekDevision", когда достигли последнего дня
-                        if (count == _iteration)
-                        {
-                            foreach (Product prod in weekDevision)
-                            {
-                                Console.WriteLine($"{prod.Name}\t{prod.Amount}\t{prod.Price * prod.Amount}$");
-                                amount += prod.Price * prod.Amount;
-                            }
-                            generalAmount += amount;
-                            Console.WriteLine("-------------------------------");
-                            Console.WriteLine($"Amount: {amount}$ \n");
-                        }
-                    }
-                    // Работаем с полной неделей
-                    else
-                    {
-                        foreach (Product prod in pair.Value)
-                        {
-                            bool repeat = false;
-                            foreach (Product item in weekDevision)
-                            {
-                                if (prod.Name == item.Name)
-                                {
-                                    int n = prod.Amount;
-                                    item.Amount += n;
-                                    repeat = true;
-                                    break;
-                                }
-                            }
-                            if (!repeat)
-                            {
-                                Product unicProd = new Product(prod.Name, prod.Size, prod.Amount, prod.Price, prod.ExpirationDate);
-                                weekDevision.Add(unicProd);
-                            }
-                        }
-
-                        // Выводим список разбиения по неделям "weekDevision", когда достигли последнего дня
-                        if (count % 7 == 0)
-                        {
-                            foreach (Product prod in weekDevision)
-                            {
-                                Console.WriteLine($"{prod.Name}\t{prod.Amount}\t{prod.Price * prod.Amount}$");
-                                amount += prod.Price * prod.Amount;
-                            }
-                            generalAmount += amount;
-                            Console.WriteLine("-------------------------------");
-                            Console.WriteLine($"Amount: {amount}$ \n");
-                        }
-                    }
-                    count++;
-                }
-                Console.WriteLine("-------------------------------");
-                Console.WriteLine($"\nGeneral: {generalAmount}$ \n");
-            }
-            Pause();
-        }
+        }        
     }
 }
