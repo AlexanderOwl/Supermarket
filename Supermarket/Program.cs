@@ -13,11 +13,15 @@ namespace Supermarket
             List<Product> productsInShop = new List<Product>();
             List<Customer> customers = new List<Customer>();
             date = DateTime.Today;
-            do
+
+            if (Password.askpass())
             {
-                productsInShop = shop.Menu(productsInShop, ref date, customers);
-                Console.Clear();
-            } while (true);
+                do
+                {
+                    productsInShop = shop.Menu(productsInShop, ref date, customers);
+                    Console.Clear();
+                } while (true);
+            }
         }
 
     }

@@ -21,7 +21,7 @@ namespace Supermarket
                 "\n1 - day stat" +
                 "\n2 - week stat" +
                 "\n3 - open cashdesk");
-            char key = Console.ReadKey().KeyChar;
+            char key = Console.ReadKey(true).KeyChar;
             switch (key)
             {
                 case '1':
@@ -88,6 +88,9 @@ namespace Supermarket
             }
             if (availableProducts.Count == 0)
             {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("NEW DELIVERY!!!");
+                Console.ResetColor();
                 availableProducts = storage.ProductGenerator(date);
             }
             largeShelf.Products = availableProducts.Where(product => product.Size == "Large").ToList();
@@ -157,7 +160,7 @@ namespace Supermarket
         public void Pause()
         {
             Console.WriteLine("...press any key");
-            Console.ReadKey();
+            Console.ReadKey(true);
         }
 
         public List<Customer> Queue(DateTime date)
@@ -206,7 +209,7 @@ namespace Supermarket
                                 Console.ForegroundColor = ConsoleColor.DarkBlue;
                                 Console.WriteLine($"Want buy? y/n");
                                 Console.ResetColor();
-                                ConsoleKey key = Console.ReadKey().Key;
+                                ConsoleKey key = Console.ReadKey(true).Key;
                                 if (key == ConsoleKey.Y)
                                 {
                                     sum += avProd.Price * avProd.Amount;
