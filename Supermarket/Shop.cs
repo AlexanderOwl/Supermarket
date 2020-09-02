@@ -60,8 +60,8 @@ namespace Supermarket
         public List<Product> OpenShop(List<Product> productsInShop, DateTime date, List<Customer> customers)
         {
             Welcome(date);
-            productsInShop = ShelfShow(productsInShop);
-            customers = Queue();
+            productsInShop = ShelfShow(productsInShop, date);
+            customers = Queue(date);
             productsInShop = Seller(customers, productsInShop);
             date.AddDays(1);
             _iteration++;
@@ -74,13 +74,13 @@ namespace Supermarket
             Console.WriteLine("Hi there! Our store is open!");
         }
 
-        public List<Product> ShelfShow(List<Product> availableProducts)
+        public List<Product> ShelfShow(List<Product> availableProducts, DateTime date)
         {
             Console.Clear();
             Storage storage = new Storage();
             if (availableProducts.Count == 0)
             {
-                availableProducts = storage.ProductGenerator();
+                availableProducts = storage.ProductGenerator(date);
                 //}
                 largeShelf.Products = availableProducts.Where(product => product.Size == "Large").ToList();
                 middleShelf.Products = availableProducts.Where(product => product.Size == "Middle").ToList();
@@ -107,6 +107,14 @@ namespace Supermarket
             }
             else
             {
+                for (int i = 0; i < availableProducts.Count; i++)// (Product prod in availableProducts)
+                {
+                    if (availableProducts[i].ExpirationDate < date)
+                    {
+                        availableProducts.Remove(availableProducts[i]);
+                        i++;
+                    }
+                }  
                 largeShelf.Products = availableProducts.Where(product => product.Size == "Large").ToList();
                 middleShelf.Products = availableProducts.Where(product => product.Size == "Middle").ToList();
                 smallShelf.Products = availableProducts.Where(product => product.Size == "Small").ToList();
@@ -178,14 +186,14 @@ namespace Supermarket
             Console.ReadKey();
         }
 
-        public List<Customer> Queue()
+        public List<Customer> Queue(DateTime date)
         {
             Random rdm = new Random();
             string[] names = new string[] { "Mary", "Nency", "Michale", "Fred", "Jina", "Marcus", "Peter", "Helen", "Oliv" };
             List<Customer> customersQueue = new List<Customer>();
             for (int i = 0; i < 2; i++)
             {
-                Customer customer = new Customer(names[rdm.Next(0, 8)], i);
+                Customer customer = new Customer(names[rdm.Next(0, 8)], i, date);
                 //удалить одинаковых людей
                 customersQueue.Add(customer);
             }

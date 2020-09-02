@@ -15,11 +15,11 @@ namespace Supermarket
         public string Name;
         private Storage _storage = new Storage();
 
-        public Customer(string Name, int QueueNumber)
+        public Customer(string Name, int QueueNumber, DateTime date)
         {
             this.QueueNumber = QueueNumber;
             this.Name = Name;
-            this.ProductsList = ShopingListGenerator(_storage.ProductGenerator());
+            this.ProductsList = ShopingListGenerator(_storage.ProductGenerator(date));
             this.Cash = AmountGenerator(20, 1000);
         }
 

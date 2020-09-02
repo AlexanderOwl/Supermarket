@@ -8,10 +8,10 @@ namespace Supermarket
     {
         public List<Product> Products = new List<Product>();
 
-        public List<Product> ProductGenerator()
+        public List<Product> ProductGenerator(DateTime date)
         {
-            DateTime date = new DateTime();
-            date = DateTime.Today;
+            //DateTime date = new DateTime();
+           //date = DateTime.Today;
             Random rdm = new Random();
             int min = 1;
             int max = 20;
