@@ -199,10 +199,10 @@ namespace Supermarket
             {
                 Console.WriteLine($"\nHello, {item.Name}. What you would like to buy?");
                 List<Product> toBuy = new List<Product>();
-                int sum = 0;
-                bool found = false;
+                int sum = 0;                
                 foreach (Product prod in item.ProductsList)
                 {
+                    bool found = false;
                     Console.Write($"\n{prod.Name}, {prod.Amount} pc.");
 
                     foreach (var avProd in availableProducts)
