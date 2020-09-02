@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace Supermarket
 {
@@ -17,12 +16,11 @@ namespace Supermarket
         {
             Console.WriteLine("-------------------------------");
             Console.WriteLine($"{date.DayOfWeek}, {date.ToShortDateString()}");
-            //List<Product> availableProducts = new ProductGenerator();
             Console.WriteLine("Welcome to console SuperPuperMarket!");
             Console.WriteLine("0 - exit" +
                 "\n1 - day stat" +
                 "\n2 - week stat" +
-                "\n3 - open cashdesk"); 
+                "\n3 - open cashdesk");
             char key = Console.ReadKey().KeyChar;
             switch (key)
             {
@@ -60,8 +58,8 @@ namespace Supermarket
         public List<Product> OpenShop(List<Product> productsInShop, DateTime date, List<Customer> customers)
         {
             Welcome(date);
-            productsInShop = ShelfShow(productsInShop);
-            customers = Queue();
+            productsInShop = ShelfShow(productsInShop, date);
+            customers = Queue(date);
             productsInShop = Seller(customers, productsInShop);
             date.AddDays(1);
             _iteration++;
@@ -74,55 +72,37 @@ namespace Supermarket
             Console.WriteLine("Hi there! Our store is open!");
         }
 
-        public List<Product> ShelfShow(List<Product> availableProducts)
+        public List<Product> ShelfShow(List<Product> availableProducts, DateTime date)
         {
             Console.Clear();
             Storage storage = new Storage();
-            if (availableProducts.Count == 0)
+            for (int i = 0; i < availableProducts.Count; i++)
             {
-                availableProducts = storage.ProductGenerator();
-                //}
-                largeShelf.Products = availableProducts.Where(product => product.Size == "Large").ToList();
-                middleShelf.Products = availableProducts.Where(product => product.Size == "Middle").ToList();
-                smallShelf.Products = availableProducts.Where(product => product.Size == "Small").ToList();
-                Random randomRemoveRange = new Random((int)DateTime.Now.Ticks);
-                largeShelf.Products.RemoveRange(2, randomRemoveRange.Next(0, largeShelf.Products.Count - 2));
-                Thread.Sleep(20);
-                middleShelf.Products.RemoveRange(2, randomRemoveRange.Next(0, middleShelf.Products.Count - 2));
-                Thread.Sleep(20);
-                smallShelf.Products.RemoveRange(2, randomRemoveRange.Next(0, smallShelf.Products.Count - 2));
-                availableProducts.Clear();
-                foreach (Product prod in smallShelf.Products)
+                if (availableProducts[i].ExpirationDate < date)
                 {
-                    availableProducts.Add(prod);
-                }
-                foreach (Product prod in middleShelf.Products)
-                {
-                    availableProducts.Add(prod);
-                }
-                foreach (Product prod in largeShelf.Products)
-                {
-                    availableProducts.Add(prod);
+                    availableProducts.Remove(availableProducts[i]);
+                    i++;
                 }
             }
-            else
+            if (availableProducts.Count == 0)
             {
-                largeShelf.Products = availableProducts.Where(product => product.Size == "Large").ToList();
-                middleShelf.Products = availableProducts.Where(product => product.Size == "Middle").ToList();
-                smallShelf.Products = availableProducts.Where(product => product.Size == "Small").ToList();
-                availableProducts.Clear();
-                foreach (Product prod in smallShelf.Products)
-                {
-                    availableProducts.Add(prod);
-                }
-                foreach (Product prod in middleShelf.Products)
-                {
-                    availableProducts.Add(prod);
-                }
-                foreach (Product prod in largeShelf.Products)
-                {
-                    availableProducts.Add(prod);
-                }
+                availableProducts = storage.ProductGenerator(date);
+            }
+            largeShelf.Products = availableProducts.Where(product => product.Size == "Large").ToList();
+            middleShelf.Products = availableProducts.Where(product => product.Size == "Middle").ToList();
+            smallShelf.Products = availableProducts.Where(product => product.Size == "Small").ToList();
+            availableProducts.Clear();
+            foreach (Product prod in smallShelf.Products)
+            {
+                availableProducts.Add(prod);
+            }
+            foreach (Product prod in middleShelf.Products)
+            {
+                availableProducts.Add(prod);
+            }
+            foreach (Product prod in largeShelf.Products)
+            {
+                availableProducts.Add(prod);
             }
             Console.WriteLine();
             Console.WriteLine("GOODS");
@@ -178,14 +158,14 @@ namespace Supermarket
             Console.ReadKey();
         }
 
-        public List<Customer> Queue()
+        public List<Customer> Queue(DateTime date)
         {
             Random rdm = new Random();
             string[] names = new string[] { "Mary", "Nency", "Michale", "Fred", "Jina", "Marcus", "Peter", "Helen", "Oliv" };
             List<Customer> customersQueue = new List<Customer>();
             for (int i = 0; i < 2; i++)
             {
-                Customer customer = new Customer(names[rdm.Next(0, 8)], i);
+                Customer customer = new Customer(names[rdm.Next(0, 8)], i, date);
                 //удалить одинаковых людей
                 customersQueue.Add(customer);
             }
@@ -200,9 +180,9 @@ namespace Supermarket
                 Console.WriteLine($"\nHello, {item.Name}. What you would like to buy?");
                 List<Product> toBuy = new List<Product>();
                 int sum = 0;
-                bool found = false;
                 foreach (Product prod in item.ProductsList)
                 {
+                    bool found = false;
                     Console.Write($"\n{prod.Name}, {prod.Amount} pc.");
 
                     foreach (var avProd in availableProducts)
@@ -216,21 +196,21 @@ namespace Supermarket
                                 sum += prod.Price * prod.Amount;
                                 toBuy.Add(prod);
                             }
-                            else if (avProd.Amount < prod.Amount)                                
+                            else if (avProd.Amount < prod.Amount)
                             {
-                                
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine($" Sorry, we have just {avProd.Amount} pc");
-                                    Console.ResetColor();
-                                    Console.ForegroundColor = ConsoleColor.DarkBlue;
-                                    Console.WriteLine($"Want buy? y/n");
-                                    Console.ResetColor();
-                                    ConsoleKey key = Console.ReadKey().Key;
-                                    if (key == ConsoleKey.Y)
-                                    {
-                                        sum += avProd.Price * avProd.Amount;
-                                        toBuy.Add(avProd);
-                                    }
+
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine($" Sorry, we have just {avProd.Amount} pc");
+                                Console.ResetColor();
+                                Console.ForegroundColor = ConsoleColor.DarkBlue;
+                                Console.WriteLine($"Want buy? y/n");
+                                Console.ResetColor();
+                                ConsoleKey key = Console.ReadKey().Key;
+                                if (key == ConsoleKey.Y)
+                                {
+                                    sum += avProd.Price * avProd.Amount;
+                                    toBuy.Add(avProd);
+                                }
                             }
                             break;
                         }
@@ -260,7 +240,7 @@ namespace Supermarket
         }
 
         public List<Product> GenerateCheck(List<Product> productsToBuy, int amount, List<Product> productsInShop, int cash, bool enoughMoney)
-        {           
+        {
             if (productsToBuy.Count == 0)
             {
                 Console.WriteLine("Please, visit us next time!");
